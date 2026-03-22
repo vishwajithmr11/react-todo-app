@@ -5,16 +5,22 @@ interface Todo {
   id: number;
   text: string;
   completed: boolean;
+  dueDate?: string;
+  dueTime?: string;
 }
 
 const TodoApp: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [input, setInput] = useState<string>('');
+  const [dueDate, setDueDate] = useState<string>('');
+  const [dueTime, setDueTime] = useState<string>('');
 
   const addTodo = () => {
     if (input.trim()) {
-      setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
+      setTodos([...todos, { id: Date.now(), text: input, completed: false, dueDate, dueTime }]);
       setInput('');
+      setDueDate('');
+      setDueTime('');
     }
   };
 
@@ -38,12 +44,26 @@ const TodoApp: React.FC = () => {
           onChange={(e) => setInput(e.target.value)} 
           placeholder="Add a new todo" 
         />
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+        />
+        <input
+          type="time"
+          value={dueTime}
+          onChange={(e) => setDueTime(e.target.value)}
+        />
         <button onClick={addTodo}>Add</button>
       </div>
       <ul className="todo-list">
         {todos.map(todo => (
           <li key={todo.id} className={todo.completed ? 'completed' : ''}>
-            <span onClick={() => toggleTodo(todo.id)}>{todo.text}</span>
+            <span onClick={() => toggleTodo(todo.id)}>
+              {todo.text}
+              {todo.dueDate && ` (Due: ${todo.dueDate}`}
+              {todo.dueTime && ` at ${todo.dueTime})`}
+            </span>
             <button onClick={() => removeTodo(todo.id)}>Remove</button>
           </li>
         ))}
